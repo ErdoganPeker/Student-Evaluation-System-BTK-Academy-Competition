@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Evaluation - BTK</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050508;color:#e2e8f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{background:#13131f;border:1px solid #1e1e35;border-radius:16px;padding:2rem;max-width:480px;width:100%;box-shadow:0 0 40px #00d4ff11}
+.badge{display:inline-block;background:#00d4ff15;border:1px solid #00d4ff33;color:#00d4ff;border-radius:999px;padding:.25rem .75rem;font-size:.75rem;margin-bottom:1rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem;background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:#64748b;font-size:.875rem;margin-bottom:1.5rem}
+label{display:block;font-size:.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+input,select{width:100%;background:#0e0e16;border:1px solid #1e1e35;border-radius:8px;padding:.6rem .8rem;color:#e2e8f0;font-size:.875rem;margin-bottom:.9rem;outline:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+button{width:100%;padding:.85rem;background:#00d4ff;color:#050508;font-weight:700;font-size:.9rem;border:none;border-radius:8px;cursor:pointer;margin-top:.25rem}
+button:hover{background:#00b8d9}
+#result{display:none;margin-top:1.5rem;background:#0e0e16;border:1px solid #00d4ff22;border-radius:10px;padding:1.25rem;text-align:center}
+.score{font-size:2.5rem;font-weight:800;color:#00d4ff;margin:.5rem 0}
+.grade{font-size:1rem;color:#94a3b8}
+</style>
+</head>
+<body>
+<div class="card">
+  <span class="badge">🎓 BTK Datathon</span>
+  <h1>Student Evaluation System</h1>
+  <p class="sub">Predict student performance score using academic and behavioral factors.</p>
+  <label>Daily Study Hours</label>
+  <input id="study" type="number" value="5" min="0" max="16" step="0.5">
+  <label>Attendance Rate (%)</label>
+  <input id="attendance" type="number" value="85" min="0" max="100">
+  <label>Previous Grade Average</label>
+  <input id="prev" type="number" value="72" min="0" max="100">
+  <div class="grid2">
+    <div><label>Extracurricular</label><select id="extra"><option value="1">Yes</option><option value="0" selected>No</option></select></div>
+    <div><label>Parent Education</label><select id="parent"><option value="1">Primary</option><option value="2" selected>Secondary</option><option value="3">University</option></select></div>
+  </div>
+  <button onclick="predict()">Evaluate Student</button>
+  <div id="result">
+    <p style="color:#64748b;font-size:.8rem">Predicted Performance</p>
+    <div class="score" id="score-val">-</div>
+    <div class="grade" id="grade-val">-</div>
+  </div>
+</div>
+<script>
+async function predict(){
+  const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({study_hours:+document.getElementById('study').value,attendance:+document.getElementById('attendance').value,prev_grade:+document.getElementById('prev').value,extracurricular:+document.getElementById('extra').value,parent_edu:+document.getElementById('parent').value})});
+  const j=await r.json();
+  document.getElementById('score-val').textContent=j.score+'/100';
+  document.getElementById('grade-val').textContent='Grade: '+j.grade;
+  document.getElementById('result').style.display='block';
+}
+</script>
+</body>
+</html>
