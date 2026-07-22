@@ -1,55 +1,837 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Student Evaluation - BTK</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Burs Değerlendirme Sistemi | BTK Akademi Veri Seti</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#050508;color:#e2e8f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
-.card{background:#13131f;border:1px solid #1e1e35;border-radius:16px;padding:2rem;max-width:480px;width:100%;box-shadow:0 0 40px #00d4ff11}
-.badge{display:inline-block;background:#00d4ff15;border:1px solid #00d4ff33;color:#00d4ff;border-radius:999px;padding:.25rem .75rem;font-size:.75rem;margin-bottom:1rem}
-h1{font-size:1.5rem;font-weight:800;margin-bottom:.4rem;background:linear-gradient(135deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sub{color:#64748b;font-size:.875rem;margin-bottom:1.5rem}
-label{display:block;font-size:.75rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
-input,select{width:100%;background:#0e0e16;border:1px solid #1e1e35;border-radius:8px;padding:.6rem .8rem;color:#e2e8f0;font-size:.875rem;margin-bottom:.9rem;outline:none}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-button{width:100%;padding:.85rem;background:#00d4ff;color:#050508;font-weight:700;font-size:.9rem;border:none;border-radius:8px;cursor:pointer;margin-top:.25rem}
-button:hover{background:#00b8d9}
-#result{display:none;margin-top:1.5rem;background:#0e0e16;border:1px solid #00d4ff22;border-radius:10px;padding:1.25rem;text-align:center}
-.score{font-size:2.5rem;font-weight:800;color:#00d4ff;margin:.5rem 0}
-.grade{font-size:1rem;color:#94a3b8}
+/* ---------- Reset ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{min-height:100vh}
+img,svg{display:block;max-width:100%}
+button{font:inherit}
+
+/* ---------- Tokens ---------- */
+:root{
+  --surface:#EFEDE6;
+  --surface-alt:#F7F5EF;
+  --card-bg:#FBFAF6;
+  --border:#DAD4C4;
+  --ink:#1B2540;
+  --ink-soft:#4B5468;
+  --muted:#7A8194;
+  --navy:#1B2540;
+  --gold:#A9761F;
+  --gold-soft:#C99A3E;
+  --crimson:#8B1E3F;
+  --danger:#9C3B3B;
+  --danger-bg:#F6E5E1;
+  --fi-low:#DADEE8;
+  --fi-high:#1B2540;
+  --tab-bg:#1B2540;
+  --tab-fg:#D9A94A;
+  --btn-bg:#1B2540;
+  --btn-fg:#F7F5EF;
+  --btn-hover:#2B3A66;
+  --shadow:0 12px 32px -14px rgba(27,37,64,.28);
+  --font-display:'Palatino Linotype',Palatino,'Iowan Old Style',Georgia,'Times New Roman',serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --font-mono:ui-monospace,'Cascadia Code','Segoe UI Mono',Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --surface:#0F1420;
+    --surface-alt:#141A28;
+    --card-bg:#171E2F;
+    --border:#2A3448;
+    --ink:#E7E2D3;
+    --ink-soft:#B9C0D0;
+    --muted:#8791A6;
+    --navy:#8AA0D6;
+    --gold:#D9A94A;
+    --gold-soft:#E8C077;
+    --crimson:#DD8AA0;
+    --danger:#E4A0A0;
+    --danger-bg:#3A2226;
+    --fi-low:#232C42;
+    --fi-high:#9FB2E0;
+    --tab-bg:#0A0D15;
+    --tab-fg:#E8C077;
+    --btn-bg:#D9A94A;
+    --btn-fg:#0F1420;
+    --btn-hover:#E8C077;
+    --shadow:0 12px 32px -14px rgba(0,0,0,.55);
+  }
+}
+:root[data-theme="light"]{
+  --surface:#EFEDE6;--surface-alt:#F7F5EF;--card-bg:#FBFAF6;--border:#DAD4C4;
+  --ink:#1B2540;--ink-soft:#4B5468;--muted:#7A8194;--navy:#1B2540;
+  --gold:#A9761F;--gold-soft:#C99A3E;--crimson:#8B1E3F;--danger:#9C3B3B;--danger-bg:#F6E5E1;
+  --fi-low:#DADEE8;--fi-high:#1B2540;--tab-bg:#1B2540;--tab-fg:#D9A94A;
+  --btn-bg:#1B2540;--btn-fg:#F7F5EF;--btn-hover:#2B3A66;
+  --shadow:0 12px 32px -14px rgba(27,37,64,.28);
+}
+:root[data-theme="dark"]{
+  --surface:#0F1420;--surface-alt:#141A28;--card-bg:#171E2F;--border:#2A3448;
+  --ink:#E7E2D3;--ink-soft:#B9C0D0;--muted:#8791A6;--navy:#8AA0D6;
+  --gold:#D9A94A;--gold-soft:#E8C077;--crimson:#DD8AA0;--danger:#E4A0A0;--danger-bg:#3A2226;
+  --fi-low:#232C42;--fi-high:#9FB2E0;--tab-bg:#0A0D15;--tab-fg:#E8C077;
+  --btn-bg:#D9A94A;--btn-fg:#0F1420;--btn-hover:#E8C077;
+  --shadow:0 12px 32px -14px rgba(0,0,0,.55);
+}
+
+body{
+  background:var(--surface);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* visible keyboard focus everywhere */
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--gold-soft);
+  outline-offset:2px;
+  border-radius:4px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
+
+/* ---------- Layout shell ---------- */
+.page{max-width:1180px;margin:0 auto;padding:1.5rem 1.25rem 3rem}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.75rem}
+.brand{display:flex;align-items:center;gap:.85rem}
+.brand-mark{flex:none}
+.brand h1{font-family:var(--font-display);font-size:1.5rem;font-weight:700;margin:0 0 .15rem;color:var(--ink);letter-spacing:.01em}
+.tagline{margin:0;font-size:.82rem;color:var(--muted)}
+
+.theme-toggle{display:flex;align-items:center;gap:.55rem;background:var(--card-bg);border:1px solid var(--border);border-radius:999px;padding:.4rem .85rem .4rem .5rem;cursor:pointer;color:var(--ink-soft);font-size:.8rem;box-shadow:var(--shadow)}
+.theme-toggle-track{width:34px;height:18px;border-radius:999px;background:var(--border);position:relative;flex:none}
+.theme-toggle-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--gold);transition:transform .25s ease}
+:root[data-theme="dark"] .theme-toggle-thumb{transform:translateX(16px)}
+
+.banner{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-radius:10px;padding:.85rem 1.1rem;margin-bottom:1.25rem;font-size:.85rem}
+.banner-error{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger)}
+.banner p{margin:0}
+.banner button{background:transparent;border:1px solid currentColor;color:inherit;border-radius:6px;padding:.35rem .8rem;cursor:pointer;font-size:.78rem;font-weight:600}
+.banner button:hover{background:currentColor;filter:brightness(1);opacity:.12}
+
+.layout{display:grid;grid-template-columns:1.35fr 1fr;gap:1.75rem;align-items:start}
+@media (max-width:920px){.layout{grid-template-columns:1fr}}
+
+/* ---------- Dossier / form ---------- */
+.dossier{background:transparent}
+.dossier-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;margin:0 0 1.4rem;color:var(--ink);display:flex;align-items:center;gap:.5rem}
+.dossier-title::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block}
+
+.section{position:relative;margin-top:2.4rem}
+.section:first-of-type{margin-top:0}
+.tab{position:absolute;top:-1.55rem;left:1.1rem;background:var(--tab-bg);color:var(--tab-fg);padding:.42rem 1rem .5rem;border-radius:8px 8px 0 0;font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:2px 12px 12px 12px;padding:1.4rem 1.4rem 1.1rem;box-shadow:var(--shadow)}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media (max-width:480px){.field-row{grid-template-columns:1fr}}
+.field{margin-bottom:1.1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem;font-weight:600}
+.live-val{font-family:var(--font-mono);color:var(--gold);text-transform:none;letter-spacing:0;font-size:.75rem}
+
+select,.num-input{
+  width:100%;background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;
+  padding:.55rem .7rem;color:var(--ink);font-size:.88rem;font-family:var(--font-body);
+}
+select:disabled,.num-input:disabled{opacity:.55;cursor:not-allowed}
+
+.range-row{display:grid;grid-template-columns:1fr 5.5rem;gap:.6rem;align-items:center}
+input[type="range"]{width:100%;accent-color:var(--gold);height:1.4rem}
+input[type="range"]:disabled{opacity:.4}
+.num-input{text-align:right;font-family:var(--font-mono)}
+
+/* segmented / radio-pill controls */
+.seg-group{display:flex;flex-wrap:wrap;gap:.45rem}
+.seg-input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.seg-label{
+  display:inline-flex;align-items:center;padding:.4rem .95rem;border-radius:999px;
+  border:1px solid var(--border);color:var(--ink-soft);font-size:.8rem;cursor:pointer;
+  background:var(--surface-alt);transition:background .15s ease,color .15s ease,border-color .15s ease;
+  user-select:none;
+}
+.seg-input:checked + .seg-label{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.seg-input:focus-visible + .seg-label{outline:2px solid var(--gold-soft);outline-offset:2px}
+.seg-label:hover{border-color:var(--gold)}
+
+.submit-btn{
+  width:100%;margin-top:2rem;background:var(--btn-bg);color:var(--btn-fg);border:none;border-radius:10px;
+  padding:.95rem;font-size:.92rem;font-weight:700;letter-spacing:.02em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:.6rem;box-shadow:var(--shadow);
+  transition:background .15s ease,transform .1s ease;
+}
+.submit-btn:hover:not(:disabled){background:var(--btn-hover)}
+.submit-btn:active:not(:disabled){transform:translateY(1px)}
+.submit-btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-spinner{width:15px;height:15px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:spin .7s linear infinite;flex:none}
+
+/* ---------- Result panel ---------- */
+.result-panel{position:static}
+@media (min-width:921px){.result-panel{position:sticky;top:1.5rem}}
+.result-inner{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.6rem 1.5rem;box-shadow:var(--shadow)}
+.result-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;margin:0 0 1.1rem}
+
+.result-empty{color:var(--muted);font-size:.85rem;padding:1.5rem .25rem;text-align:center;border:1px dashed var(--border);border-radius:10px}
+.result-empty p{margin:0}
+
+.result-loading{display:flex;flex-direction:column;align-items:center;gap:.85rem;padding:2.4rem 0;color:var(--muted);font-size:.85rem}
+.spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--gold);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.seal-wrap{position:relative;width:min(200px,60%);margin:0 auto;aspect-ratio:1/1}
+.seal-svg{width:100%;height:100%;overflow:visible}
+.seal-perf{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:1 7;stroke-linecap:round;opacity:.55}
+.seal-track{fill:none;stroke:var(--border);stroke-width:10}
+.seal-progress{fill:none;stroke:var(--gold);stroke-width:10;stroke-linecap:round;transform:rotate(-90deg);transform-origin:100px 100px}
+.seal-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.seal-score{font-family:var(--font-display);font-size:2.6rem;font-weight:700;color:var(--ink);line-height:1}
+.seal-max{font-size:.8rem;color:var(--muted);font-family:var(--font-mono)}
+.seal-label{text-align:center;color:var(--muted);font-size:.78rem;margin:.9rem 0 1.4rem;text-transform:uppercase;letter-spacing:.05em}
+
+.r2-badge{display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:var(--surface-alt);border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;margin-bottom:1.5rem}
+.r2-label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:600}
+.r2-sub{display:block;font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.r2-value{font-family:var(--font-mono);font-size:1.05rem;color:var(--gold);font-weight:700;white-space:nowrap}
+
+.fi-title{font-size:.85rem;font-weight:700;margin:0 0 .3rem;color:var(--ink)}
+.fi-note{font-size:.78rem;color:var(--muted);margin:0 0 1rem;line-height:1.5}
+.fi-note strong{color:var(--ink-soft)}
+.fi-list{display:flex;flex-direction:column;gap:.55rem}
+.fi-row{display:grid;grid-template-columns:9.5rem 1fr 3.4rem;align-items:center;gap:.6rem}
+@media (max-width:420px){.fi-row{grid-template-columns:1fr;row-gap:.25rem}.fi-value{text-align:left}}
+.fi-label{font-size:.74rem;color:var(--ink-soft);display:flex;align-items:center;gap:.3rem}
+.fi-top .fi-label{color:var(--gold);font-weight:700}
+.fi-star{color:var(--gold);font-size:.75rem}
+.fi-bar-track{background:var(--surface-alt);border-radius:6px;height:10px;overflow:hidden;border:1px solid var(--border)}
+.fi-bar-fill{height:100%;width:0;border-radius:6px;background:var(--fi-high)}
+.fi-top .fi-bar-fill{background:linear-gradient(90deg,var(--gold),var(--gold-soft))}
+.fi-value{font-family:var(--font-mono);font-size:.74rem;color:var(--ink-soft);text-align:right}
+
+/* ---------- Footer ---------- */
+.page-footer{margin-top:2.5rem;text-align:center;color:var(--muted);font-size:.75rem;line-height:1.6}
 </style>
 </head>
 <body>
-<div class="card">
-  <span class="badge">🎓 BTK Datathon</span>
-  <h1>Student Evaluation System</h1>
-  <p class="sub">Predict student performance score using academic and behavioral factors.</p>
-  <label>Daily Study Hours</label>
-  <input id="study" type="number" value="5" min="0" max="16" step="0.5">
-  <label>Attendance Rate (%)</label>
-  <input id="attendance" type="number" value="85" min="0" max="100">
-  <label>Previous Grade Average</label>
-  <input id="prev" type="number" value="72" min="0" max="100">
-  <div class="grid2">
-    <div><label>Extracurricular</label><select id="extra"><option value="1">Yes</option><option value="0" selected>No</option></select></div>
-    <div><label>Parent Education</label><select id="parent"><option value="1">Primary</option><option value="2" selected>Secondary</option><option value="3">University</option></select></div>
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" width="42" height="42" viewBox="0 0 42 42" aria-hidden="true">
+        <circle cx="21" cy="21" r="19" fill="none" stroke="#A9761F" stroke-width="2" stroke-dasharray="1 5" stroke-linecap="round"/>
+        <circle cx="21" cy="21" r="14" fill="none" stroke="#1B2540" stroke-width="2"/>
+        <path d="M21 12 L23.5 18.5 L30 19 L25 23.2 L26.6 29.8 L21 26.2 L15.4 29.8 L17 23.2 L12 19 L18.5 18.5 Z" fill="#A9761F"/>
+      </svg>
+      <div>
+        <h1>Burs Değerlendirme Sistemi</h1>
+        <p class="tagline">65.125 gerçek BTK Akademi burs başvurusu ile eğitilmiş tahmin modeli</p>
+      </div>
+    </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false">
+      <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+      <span id="theme-toggle-text">Koyu tema</span>
+    </button>
+  </header>
+
+  <div class="banner banner-error" id="options-error" hidden>
+    <p>Seçenekler yüklenemedi. Sunucuya bağlanılamıyor olabilir.</p>
+    <button type="button" id="options-retry">Tekrar dene</button>
   </div>
-  <button onclick="predict()">Evaluate Student</button>
-  <div id="result">
-    <p style="color:#64748b;font-size:.8rem">Predicted Performance</p>
-    <div class="score" id="score-val">-</div>
-    <div class="grade" id="grade-val">-</div>
-  </div>
+
+  <main class="layout">
+    <section class="dossier" aria-labelledby="form-title">
+      <h2 class="dossier-title" id="form-title">Başvuru Dosyası</h2>
+
+      <form id="predict-form" novalidate>
+
+        <div class="section">
+          <span class="tab">Kişisel Bilgiler</span>
+          <div class="card">
+            <div class="field-row">
+              <div class="field">
+                <label for="f-gender">Cinsiyet</label>
+                <select id="f-gender" disabled><option>Yükleniyor…</option></select>
+              </div>
+              <div class="field">
+                <label for="f-city">İkamet Şehri</label>
+                <select id="f-city" disabled><option>Yükleniyor…</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="tab">Üniversite</span>
+          <div class="card">
+            <div class="field-row">
+              <div class="field">
+                <label for="f-utype">Üniversite Türü</label>
+                <select id="f-utype" disabled><option>Yükleniyor…</option></select>
+              </div>
+              <div class="field">
+                <label for="f-uyear">Üniversite Sınıfı</label>
+                <select id="f-uyear">
+                  <option value="0">Hazırlık</option>
+                  <option value="1">1. Sınıf</option>
+                  <option value="2">2. Sınıf</option>
+                  <option value="3" selected>3. Sınıf</option>
+                  <option value="4">4. Sınıf</option>
+                  <option value="5">Mezun</option>
+                  <option value="6">Yüksek Lisans / Tez</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-gpa">Üniversite Not Ortalaması <span class="live-val" id="f-gpa-out">3.20</span></label>
+              <div class="range-row">
+                <input type="range" id="f-gpa" min="0" max="4" step="0.01" value="3.2">
+                <input type="number" class="num-input" id="f-gpa-num" min="0" max="4" step="0.01" value="3.2" aria-label="Üniversite not ortalaması (sayısal giriş)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="tab">Lise</span>
+          <div class="card">
+            <div class="field">
+              <label for="f-htype">Lise Türü</label>
+              <select id="f-htype" disabled><option>Yükleniyor…</option></select>
+            </div>
+            <div class="field">
+              <label for="f-hgrade">Lise Notu <span class="live-val" id="f-hgrade-out">85</span></label>
+              <div class="range-row">
+                <input type="range" id="f-hgrade" min="0" max="100" step="1" value="85">
+                <input type="number" class="num-input" id="f-hgrade-num" min="0" max="100" step="1" value="85" aria-label="Lise notu (sayısal giriş)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="tab">Burs Durumu</span>
+          <div class="card">
+            <div class="field">
+              <label>Aktif burs var mı?</label>
+              <div class="seg-group" id="f-hasscholarship"></div>
+            </div>
+            <div class="field">
+              <label for="f-scholpct">Burs Yüzdesi <span class="live-val" id="f-scholpct-out">0</span></label>
+              <div class="range-row">
+                <input type="range" id="f-scholpct" min="0" max="100" step="1" value="0" disabled>
+                <input type="number" class="num-input" id="f-scholpct-num" min="0" max="100" step="1" value="0" disabled aria-label="Burs yüzdesi (sayısal giriş)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <span class="tab">Aile &amp; Sosyal</span>
+          <div class="card">
+            <div class="field-row">
+              <div class="field">
+                <label for="f-medu">Anne Eğitim Durumu</label>
+                <select id="f-medu" disabled><option>Yükleniyor…</option></select>
+              </div>
+              <div class="field">
+                <label for="f-fedu">Baba Eğitim Durumu</label>
+                <select id="f-fedu" disabled><option>Yükleniyor…</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-sibs">Kardeş Sayısı <span class="live-val" id="f-sibs-out">2</span></label>
+              <div class="range-row">
+                <input type="range" id="f-sibs" min="0" max="15" step="1" value="2">
+                <input type="number" class="num-input" id="f-sibs-num" min="0" max="15" step="1" value="2" aria-label="Kardeş sayısı (sayısal giriş)">
+              </div>
+            </div>
+            <div class="field">
+              <label>Girişimcilik Kulübü Üyeliği</label>
+              <div class="seg-group" id="f-entre"></div>
+            </div>
+            <div class="field">
+              <label>İngilizce Bilgisi</label>
+              <div class="seg-group" id="f-eng"></div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn" disabled>
+          <span id="submit-btn-text">Seçenekler yükleniyor…</span>
+        </button>
+      </form>
+    </section>
+
+    <aside class="result-panel">
+      <div class="result-inner" aria-live="polite">
+        <h2 class="result-title">Değerlendirme Sonucu</h2>
+
+        <div class="result-empty" id="result-empty">
+          <p>Formu doldurup <strong>“Puanı Hesapla”</strong> butonuna bastığında tahmini burs değerlendirme puanı burada görünecek.</p>
+        </div>
+
+        <div class="result-loading" id="result-loading" hidden>
+          <div class="spinner" aria-hidden="true"></div>
+          <p>Hesaplanıyor…</p>
+        </div>
+
+        <div class="banner banner-error" id="result-error" hidden>
+          <p id="result-error-text">Tahmin alınamadı.</p>
+          <button type="button" id="result-retry">Tekrar dene</button>
+        </div>
+
+        <div id="result-content" hidden>
+          <div class="seal-wrap">
+            <svg class="seal-svg" viewBox="0 0 200 200" aria-hidden="true">
+              <circle class="seal-perf" cx="100" cy="100" r="93"></circle>
+              <circle class="seal-track" cx="100" cy="100" r="78"></circle>
+              <circle class="seal-progress" id="seal-progress" cx="100" cy="100" r="78"></circle>
+            </svg>
+            <div class="seal-center">
+              <span class="seal-score" id="seal-score">0</span>
+              <span class="seal-max">/ 100</span>
+            </div>
+          </div>
+          <p class="seal-label">Tahmini burs değerlendirme puanı</p>
+
+          <div class="r2-badge">
+            <div>
+              <span class="r2-label">Model Güven Skoru</span>
+              <span class="r2-sub">R² (açıklanan varyans)</span>
+            </div>
+            <span class="r2-value" id="r2-value">–</span>
+          </div>
+
+          <div class="fi-block">
+            <h3 class="fi-title">Puanı Belirleyen Faktörler</h3>
+            <p class="fi-note">Modelde en etkili faktör <strong>girişimcilik kulübü üyeliği</strong> — akademik notlardan bile daha belirleyici çıkıyor.</p>
+            <div class="fi-list" id="fi-list"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="page-footer">
+    <p>Bu demo, 65.125 gerçek BTK Akademi burs başvurusu üzerinde eğitilmiş bir regresyon modelinin tahminlerini gösterir.<br>Portföy / demo amaçlıdır, resmi bir burs değerlendirmesi değildir.</p>
+  </footer>
+
 </div>
+
 <script>
-async function predict(){
-  const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({study_hours:+document.getElementById('study').value,attendance:+document.getElementById('attendance').value,prev_grade:+document.getElementById('prev').value,extracurricular:+document.getElementById('extra').value,parent_edu:+document.getElementById('parent').value})});
-  const j=await r.json();
-  document.getElementById('score-val').textContent=j.score+'/100';
-  document.getElementById('grade-val').textContent='Grade: '+j.grade;
-  document.getElementById('result').style.display='block';
-}
+(function(){
+  "use strict";
+
+  /* ---------- Theme ---------- */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('theme-toggle');
+  var themeText = document.getElementById('theme-toggle-text');
+
+  function applyTheme(t){
+    root.setAttribute('data-theme', t);
+    themeText.textContent = t === 'dark' ? 'Açık tema' : 'Koyu tema';
+    themeBtn.setAttribute('aria-pressed', String(t === 'dark'));
+    try{ localStorage.setItem('scholarship-theme', t); }catch(e){}
+  }
+  (function initTheme(){
+    var stored = null;
+    try{ stored = localStorage.getItem('scholarship-theme'); }catch(e){}
+    var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(stored || (systemDark ? 'dark' : 'light'));
+  })();
+  themeBtn.addEventListener('click', function(){
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Feature label map ---------- */
+  var FEATURE_LABELS = {
+    gender: 'Cinsiyet',
+    residence_city: 'İkamet Şehri',
+    university_type: 'Üniversite Türü',
+    university_year: 'Üniversite Sınıfı',
+    university_gpa: 'Üniversite Not Ortalaması',
+    high_school_type: 'Lise Türü',
+    high_school_grade: 'Lise Notu',
+    has_scholarship: 'Burs Durumu',
+    scholarship_percentage: 'Burs Yüzdesi',
+    mother_education: 'Anne Eğitim Durumu',
+    father_education: 'Baba Eğitim Durumu',
+    sibling_count: 'Kardeş Sayısı',
+    entrepreneurship_club_member: 'Girişimcilik Kulübü Üyeliği',
+    knows_english: 'İngilizce Bilgisi'
+  };
+
+  /* ---------- Small helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function cssVar(name){
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+
+  function hexToRgb(hex){
+    var h = hex.replace('#','');
+    if(h.length === 3){ h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; }
+    return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)];
+  }
+
+  function lerpColor(hexA, hexB, t){
+    t = Math.max(0, Math.min(1, t));
+    var a = hexToRgb(hexA), b = hexToRgb(hexB);
+    var r = Math.round(a[0] + (b[0]-a[0]) * t);
+    var g = Math.round(a[1] + (b[1]-a[1]) * t);
+    var bl = Math.round(a[2] + (b[2]-a[2]) * t);
+    return 'rgb(' + r + ',' + g + ',' + bl + ')';
+  }
+
+  function syncPair(rangeEl, numEl, outEl, decimals){
+    function format(v){ return decimals ? v.toFixed(decimals) : String(Math.round(v)); }
+    function fromRange(){
+      var v = parseFloat(rangeEl.value);
+      numEl.value = format(v);
+      if(outEl) outEl.textContent = format(v);
+    }
+    function fromNum(){
+      var v = parseFloat(numEl.value);
+      if(isNaN(v)) return;
+      var min = parseFloat(rangeEl.min), max = parseFloat(rangeEl.max);
+      v = Math.min(max, Math.max(min, v));
+      rangeEl.value = String(v);
+      numEl.value = format(v);
+      if(outEl) outEl.textContent = format(v);
+    }
+    rangeEl.addEventListener('input', fromRange);
+    numEl.addEventListener('input', fromNum);
+    numEl.addEventListener('blur', fromNum);
+    fromRange();
+    return { get: function(){ return parseFloat(rangeEl.value); } };
+  }
+
+  function buildSegmented(container, name, values, defaultValue){
+    container.innerHTML = '';
+    var chosen = values.indexOf(defaultValue) !== -1 ? defaultValue : values[0];
+    values.forEach(function(v, i){
+      var id = name + '-opt' + i;
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = name;
+      input.id = id;
+      input.value = v;
+      input.className = 'seg-input';
+      if(v === chosen) input.checked = true;
+      var label = document.createElement('label');
+      label.setAttribute('for', id);
+      label.className = 'seg-label';
+      label.textContent = v;
+      container.appendChild(input);
+      container.appendChild(label);
+    });
+    return {
+      get: function(){
+        var checked = container.querySelector('input:checked');
+        return checked ? checked.value : chosen;
+      },
+      onChange: function(cb){
+        container.addEventListener('change', function(e){ cb(e.target.value); });
+      }
+    };
+  }
+
+  function populateSelect(id, list){
+    var sel = $(id);
+    sel.innerHTML = '';
+    list.forEach(function(v){
+      var o = document.createElement('option');
+      o.value = v;
+      o.textContent = v;
+      sel.appendChild(o);
+    });
+    sel.disabled = false;
+  }
+
+  /* ---------- State ---------- */
+  var state = { seg: {}, gpa: null, hgrade: null, scholpct: null, sibs: null };
+
+  /* ---------- Range/number pairs (independent of /options) ---------- */
+  function initRanges(){
+    state.gpa = syncPair($('f-gpa'), $('f-gpa-num'), $('f-gpa-out'), 2);
+    state.hgrade = syncPair($('f-hgrade'), $('f-hgrade-num'), $('f-hgrade-out'), 0);
+    state.scholpct = syncPair($('f-scholpct'), $('f-scholpct-num'), $('f-scholpct-out'), 0);
+    state.sibs = syncPair($('f-sibs'), $('f-sibs-num'), $('f-sibs-out'), 0);
+  }
+
+  function onScholarshipToggle(){
+    var val = state.seg.has_scholarship.get();
+    var range = $('f-scholpct'), num = $('f-scholpct-num');
+    var disabled = val === 'Hayır';
+    range.disabled = disabled;
+    num.disabled = disabled;
+    if(disabled){
+      range.value = '0';
+      num.value = '0';
+      $('f-scholpct-out').textContent = '0';
+    }
+  }
+
+  /* ---------- Options loading ---------- */
+  var SELECT_IDS = ['f-gender','f-city','f-utype','f-htype','f-medu','f-fedu'];
+
+  function setSelectsLoading(){
+    SELECT_IDS.forEach(function(id){
+      var el = $(id);
+      el.disabled = true;
+      el.innerHTML = '<option>Yükleniyor…</option>';
+    });
+  }
+  function setSelectsError(){
+    SELECT_IDS.forEach(function(id){
+      var el = $(id);
+      el.disabled = true;
+      el.innerHTML = '<option>Kullanılamıyor</option>';
+    });
+  }
+  function setFormEnabled(enabled){
+    $('submit-btn').disabled = !enabled;
+    $('submit-btn-text').textContent = enabled ? 'Puanı Hesapla' : 'Seçenekler yükleniyor…';
+  }
+  function showOptionsError(show){
+    $('options-error').hidden = !show;
+    if(show){
+      setSelectsError();
+      $('submit-btn').disabled = true;
+      $('submit-btn-text').textContent = 'Seçenekler yüklenemedi';
+    }
+  }
+
+  function loadOptions(){
+    showOptionsError(false);
+    setSelectsLoading();
+    setFormEnabled(false);
+
+    fetch('/options')
+      .then(function(res){
+        if(!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        populateSelect('f-gender', data.gender);
+        populateSelect('f-city', data.residence_city);
+        populateSelect('f-utype', data.university_type);
+        populateSelect('f-htype', data.high_school_type);
+        populateSelect('f-medu', data.mother_education);
+        populateSelect('f-fedu', data.father_education);
+
+        state.seg.has_scholarship = buildSegmented($('f-hasscholarship'), 'has_scholarship', data.has_scholarship, 'Hayır');
+        state.seg.entrepreneurship_club_member = buildSegmented($('f-entre'), 'entrepreneurship_club_member', data.entrepreneurship_club_member, 'Hayır');
+        state.seg.knows_english = buildSegmented($('f-eng'), 'knows_english', data.knows_english, 'Evet');
+
+        state.seg.has_scholarship.onChange(onScholarshipToggle);
+        onScholarshipToggle();
+
+        setFormEnabled(true);
+      })
+      .catch(function(){
+        showOptionsError(true);
+      });
+  }
+
+  /* ---------- Result rendering ---------- */
+  var SEAL_R = 78;
+  var SEAL_C = 2 * Math.PI * SEAL_R;
+
+  function showResultState(mode){
+    $('result-empty').hidden = mode !== 'empty';
+    $('result-loading').hidden = mode !== 'loading';
+    $('result-error').hidden = mode !== 'error';
+    $('result-content').hidden = mode !== 'content';
+  }
+
+  function animateSeal(score){
+    var circle = $('seal-progress');
+    var clamped = Math.max(0, Math.min(100, score));
+    var offset = SEAL_C - (clamped / 100) * SEAL_C;
+    circle.style.strokeDasharray = String(SEAL_C);
+    if(reduceMotion){
+      circle.style.transition = 'none';
+      circle.style.strokeDashoffset = String(offset);
+      return;
+    }
+    circle.style.transition = 'none';
+    circle.style.strokeDashoffset = String(SEAL_C);
+    void circle.getBoundingClientRect();
+    requestAnimationFrame(function(){
+      circle.style.transition = 'stroke-dashoffset 900ms cubic-bezier(.16,1,.3,1)';
+      circle.style.strokeDashoffset = String(offset);
+    });
+  }
+
+  function renderFeatureImportance(list){
+    var container = $('fi-list');
+    container.innerHTML = '';
+    if(!list || !list.length) return;
+    var maxVal = list.reduce(function(m, item){ return Math.max(m, item.importance); }, 0) || 1;
+    var low = cssVar('--fi-low') || '#DADEE8';
+    var high = cssVar('--fi-high') || '#1B2540';
+
+    var fills = [];
+    list.forEach(function(item, idx){
+      var label = FEATURE_LABELS[item.feature] || item.feature;
+      var ratio = item.importance / maxVal;
+      var pct = Math.max(2, ratio * 100);
+      var valuePct = (item.importance * 100).toFixed(1) + '%';
+
+      var row = document.createElement('div');
+      row.className = 'fi-row' + (idx === 0 ? ' fi-top' : '');
+
+      var labelDiv = document.createElement('div');
+      labelDiv.className = 'fi-label';
+      labelDiv.textContent = label;
+      if(idx === 0){
+        var star = document.createElement('span');
+        star.className = 'fi-star';
+        star.title = 'En etkili faktör';
+        star.textContent = ' ★';
+        labelDiv.appendChild(star);
+      }
+
+      var track = document.createElement('div');
+      track.className = 'fi-bar-track';
+      var fill = document.createElement('div');
+      fill.className = 'fi-bar-fill';
+      fill.style.width = '0%';
+      if(idx !== 0){
+        fill.style.background = lerpColor(low, high, ratio);
+      }
+      track.appendChild(fill);
+
+      var valDiv = document.createElement('div');
+      valDiv.className = 'fi-value';
+      valDiv.textContent = valuePct;
+
+      row.appendChild(labelDiv);
+      row.appendChild(track);
+      row.appendChild(valDiv);
+      container.appendChild(row);
+
+      fills.push({ el: fill, pct: pct });
+    });
+
+    requestAnimationFrame(function(){
+      fills.forEach(function(f){
+        f.el.style.transition = reduceMotion ? 'none' : 'width 700ms ease';
+        f.el.style.width = f.pct + '%';
+      });
+    });
+  }
+
+  function renderResult(data){
+    var score = typeof data.predicted_score === 'number' ? data.predicted_score : 0;
+    animateSeal(score);
+    $('seal-score').textContent = (Math.round(score * 10) / 10).toString();
+
+    var r2 = typeof data.model_r2 === 'number' ? data.model_r2 : 0;
+    $('r2-value').textContent = r2.toFixed(3) + '  ·  %' + (r2 * 100).toFixed(1);
+
+    renderFeatureImportance(data.feature_importance || []);
+  }
+
+  /* ---------- Predict ---------- */
+  function collectPayload(){
+    var hasScholarship = state.seg.has_scholarship.get();
+    return {
+      gender: $('f-gender').value,
+      residence_city: $('f-city').value,
+      university_type: $('f-utype').value,
+      university_year: Number($('f-uyear').value),
+      university_gpa: Math.round(state.gpa.get() * 100) / 100,
+      high_school_type: $('f-htype').value,
+      high_school_grade: Math.round(state.hgrade.get()),
+      has_scholarship: hasScholarship,
+      scholarship_percentage: hasScholarship === 'Hayır' ? 0 : Math.round(state.scholpct.get()),
+      mother_education: $('f-medu').value,
+      father_education: $('f-fedu').value,
+      sibling_count: Math.round(state.sibs.get()),
+      entrepreneurship_club_member: state.seg.entrepreneurship_club_member.get(),
+      knows_english: state.seg.knows_english.get()
+    };
+  }
+
+  function setSubmitLoading(loading){
+    var btn = $('submit-btn');
+    var text = $('submit-btn-text');
+    btn.disabled = loading;
+    if(loading){
+      text.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span> Hesaplanıyor…';
+    }else{
+      text.textContent = 'Puanı Hesapla';
+    }
+  }
+
+  function runPredict(){
+    var payload = collectPayload();
+    showResultState('loading');
+    setSubmitLoading(true);
+
+    fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res){
+      if(!res.ok){
+        return res.json().catch(function(){ return null; }).then(function(errBody){
+          var msg = 'Sunucu hatası (HTTP ' + res.status + ')';
+          if(errBody && errBody.detail){
+            msg = typeof errBody.detail === 'string' ? errBody.detail : JSON.stringify(errBody.detail);
+          }
+          throw new Error(msg);
+        });
+      }
+      return res.json();
+    })
+    .then(function(data){
+      renderResult(data);
+      showResultState('content');
+    })
+    .catch(function(err){
+      $('result-error-text').textContent = (err && err.message) ? err.message : 'Tahmin alınamadı. Lütfen tekrar deneyin.';
+      showResultState('error');
+    })
+    .finally(function(){
+      setSubmitLoading(false);
+    });
+  }
+
+  /* ---------- Wire up ---------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    initRanges();
+    loadOptions();
+
+    $('predict-form').addEventListener('submit', function(e){
+      e.preventDefault();
+      runPredict();
+    });
+    $('options-retry').addEventListener('click', loadOptions);
+    $('result-retry').addEventListener('click', runPredict);
+  });
+})();
 </script>
 </body>
 </html>
